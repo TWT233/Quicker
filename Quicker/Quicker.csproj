@@ -53,27 +53,27 @@
             <Publicize>False</Publicize> <!--Allows private/protected field references but may cause errors.-->
         </Reference>
 
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" />
-        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*" />
-        <AdditionalFiles Include="Quicker\localization\**\*.json" />
+        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*"/>
+        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>
+        <AdditionalFiles Include="Quicker\localization\**\*.json"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Quicker\**" />
-        <Compile Remove="materials\**" />
-        <Compile Remove="shaders\**" />
-        <Compile Remove="images\**" />
-        <EmbeddedResource Remove="Quicker\**" />
-        <EmbeddedResource Remove="materials\**" />
-        <EmbeddedResource Remove="shaders\**" />
-        <EmbeddedResource Remove="images\**" />
+        <Compile Remove="Quicker\**"/>
+        <Compile Remove="materials\**"/>
+        <Compile Remove="shaders\**"/>
+        <Compile Remove="images\**"/>
+        <EmbeddedResource Remove="Quicker\**"/>
+        <EmbeddedResource Remove="materials\**"/>
+        <EmbeddedResource Remove="shaders\**"/>
+        <EmbeddedResource Remove="images\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include=".gitignore" />
-        <None Include="mod_manifest.json" />
-        <None Include="project.godot" />
-        <None Include="Quicker\**" />
+        <None Include=".gitignore"/>
+        <None Include="mod_manifest.json"/>
+        <None Include="project.godot"/>
+        <None Include="Quicker\**"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -84,26 +84,26 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="GEMINI.md" />
-      <Content Include="prompt.md" />
+        <Content Include="GEMINI.md"/>
+        <Content Include="prompt.md"/>
     </ItemGroup>
 
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
-        <Message Text="Copying .dll to mods folder." Importance="high" />
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Path)\mods\" />
-        <Message Text="Copying BaseLib to mods folder." Importance="high" />
+        <Message Text="Copying .dll to mods folder." Importance="high"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Path)\mods\"/>
+        <Message Text="Copying BaseLib to mods folder." Importance="high"/>
         <ItemGroup>
-            <BaseLibFiles Include="packages/alchyr.sts2.baselib/**/lib/**/BaseLib.dll;packages/alchyr.sts2.baselib/**/Content/BaseLib.pck" />
+            <BaseLibFiles Include="packages/alchyr.sts2.baselib/**/lib/**/BaseLib.dll;packages/alchyr.sts2.baselib/**/Content/BaseLib.pck"/>
         </ItemGroup>
-        <Copy SourceFiles="@(BaseLibFiles)" DestinationFolder="$(Sts2Path)\mods\" />
+        <Copy SourceFiles="@(BaseLibFiles)" DestinationFolder="$(Sts2Path)\mods\"/>
     </Target>
 
     <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
-        <Message Text="Exporting Godot .pck to mods folder" Importance="high" />
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Path)/mods/$(MSBuildProjectName).pck&quot;" EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" ContinueOnError="WarnAndContinue" />
+        <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Path)/mods/$(MSBuildProjectName).pck&quot;" EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" ContinueOnError="WarnAndContinue"/>
     </Target>
 
     <Target Name="GodotPublishSkipped" AfterTargets="Publish" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')">
-        <Message Text="Skipping Godot .pck export because GodotPath is not configured." Importance="high" />
+        <Message Text="Skipping Godot .pck export because GodotPath is not configured." Importance="high"/>
     </Target>
 </Project>

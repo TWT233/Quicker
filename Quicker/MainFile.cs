@@ -2,8 +2,11 @@ using System.Reflection;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Debug;
+using Logger = MegaCrit.Sts2.Core.Logging.Logger;
 
 namespace Quicker;
 
@@ -11,7 +14,7 @@ namespace Quicker;
 public partial class MainFile : Node
 {
     private const string ModId = "Quicker";
-    private static MegaCrit.Sts2.Core.Logging.Logger Logger { get; } = new(ModId, MegaCrit.Sts2.Core.Logging.LogType.Generic);
+    private static Logger Logger { get; } = new(ModId, LogType.Generic);
 
     public static float DeltaMultiplier { get; set; } = 2.0f;
     public static bool IsDeltaMultiplied { get; set; } = true;
@@ -20,7 +23,7 @@ public partial class MainFile : Node
     public static void Initialize()
     {
         Harmony harmony = new(ModId);
-        
+
         // Auto patch with attributes (for NGame)
         harmony.PatchAll(Assembly.GetExecutingAssembly());
 
@@ -28,40 +31,42 @@ public partial class MainFile : Node
         try
         {
             var smoothDampFloat = typeof(MathHelper).GetMethod(nameof(MathHelper.SmoothDamp),
-                [typeof(float), typeof(float), typeof(float).MakeByRefType(), typeof(float), typeof(float), typeof(float)
-                ]);
+            [
+                typeof(float), typeof(float), typeof(float).MakeByRefType(), typeof(float), typeof(float), typeof(float)
+            ]);
             if (smoothDampFloat != null)
-            {
-                harmony.Patch(smoothDampFloat, prefix: new HarmonyMethod(typeof(SmoothDampPatches).GetMethod(nameof(SmoothDampPatches.FloatPrefix))));
-            }
+                harmony.Patch(smoothDampFloat,
+                    new HarmonyMethod(typeof(SmoothDampPatches).GetMethod(nameof(SmoothDampPatches.FloatPrefix))));
 
             var smoothDampVector2 = typeof(MathHelper).GetMethod(nameof(MathHelper.SmoothDamp),
-                [typeof(Vector2), typeof(Vector2), typeof(Vector2).MakeByRefType(), typeof(float), typeof(float), typeof(float)
-                ]);
+            [
+                typeof(Vector2), typeof(Vector2), typeof(Vector2).MakeByRefType(), typeof(float), typeof(float),
+                typeof(float)
+            ]);
             if (smoothDampVector2 != null)
-            {
-                harmony.Patch(smoothDampVector2, prefix: new HarmonyMethod(typeof(SmoothDampPatches).GetMethod(nameof(SmoothDampPatches.Vector2Prefix))));
-            }
+                harmony.Patch(smoothDampVector2,
+                    new HarmonyMethod(typeof(SmoothDampPatches).GetMethod(nameof(SmoothDampPatches.Vector2Prefix))));
         }
         catch (Exception ex)
         {
             Logger.Error($"Failed to patch SmoothDamp: {ex.Message}");
         }
-        
-        Log("Quicker Initialized");
+
+        Log("Initialized");
     }
 
-    public static void Log(string message)
+    public static void Log(string message, LogLevel level = LogLevel.Info, int skipFrames = 1)
     {
-        Logger.Info(message);
+        Logger.LogMessage(level, $"[{ModId}] {message}", skipFrames);
+
         try
         {
-            var console = MegaCrit.Sts2.Core.Nodes.Debug.NDevConsole.Instance;
-            var outputBufferField = typeof(MegaCrit.Sts2.Core.Nodes.Debug.NDevConsole).GetField("_outputBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (outputBufferField?.GetValue(console) is RichTextLabel outputBuffer)
-            {
-                outputBuffer.Text += $"[color=#00ffff][Quicker][/color] {message}\n";
-            }
+            var console = NDevConsole.Instance;
+            var outputBufferField =
+                typeof(NDevConsole).GetField("_outputBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (outputBufferField?.GetValue(console) is not RichTextLabel outputBuffer) return;
+            outputBuffer.Text += $"[color=#00ffff][{ModId}][/color] {message}";
+            outputBuffer.Text += "\n";
         }
         catch
         {
@@ -75,10 +80,7 @@ public static class NGameReadyPatch
 {
     public static void Postfix()
     {
-        if (MainFile.IsDeltaMultiplied)
-        {
-            Engine.TimeScale = MainFile.DeltaMultiplier;
-        }
+        if (MainFile.IsDeltaMultiplied) Engine.TimeScale = MainFile.DeltaMultiplier;
     }
 }
 
@@ -88,15 +90,16 @@ public static class NGameInputPatch
     public static void Postfix(InputEvent inputEvent)
     {
         if (inputEvent is not InputEventKey { Pressed: true } keyEvent || keyEvent.Echo) return;
-        
+
         var oldScale = Engine.TimeScale;
-        
+
         switch (keyEvent.Keycode)
         {
             case Key.F8:
                 MainFile.IsDeltaMultiplied = !MainFile.IsDeltaMultiplied;
                 Engine.TimeScale = MainFile.IsDeltaMultiplied ? MainFile.DeltaMultiplier : 1.0;
-                MainFile.Log($"Speed Multiplier Toggled: {MainFile.IsDeltaMultiplied} (Scale: {oldScale:F1} -> {Engine.TimeScale:F1})");
+                MainFile.Log(
+                    $"Speed Multiplier Toggled: {MainFile.IsDeltaMultiplied} (Scale: {oldScale:F1} -> {Engine.TimeScale:F1})");
                 break;
             case Key.F9:
                 MainFile.IsInstantLerp = !MainFile.IsInstantLerp;
