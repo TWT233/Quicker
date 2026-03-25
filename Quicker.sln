@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quicker", "Quicker\Quicker.csproj", "{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quicker", "Quicker.csproj", "{2B935391-C580-44D5-9263-16526037E2C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,11 +9,11 @@ Global
 		ExportRelease|Any CPU = ExportRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{2DB8C4C0-61E7-47BA-A638-FEA7F3E5CF74}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{2B935391-C580-44D5-9263-16526037E2C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B935391-C580-44D5-9263-16526037E2C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B935391-C580-44D5-9263-16526037E2C5}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{2B935391-C580-44D5-9263-16526037E2C5}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{2B935391-C580-44D5-9263-16526037E2C5}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{2B935391-C580-44D5-9263-16526037E2C5}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal

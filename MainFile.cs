@@ -1,10 +1,14 @@
 using System.Reflection;
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Debug;
 using Logger = MegaCrit.Sts2.Core.Logging.Logger;
 
@@ -13,7 +17,7 @@ namespace Quicker;
 [ModInitializer(nameof(Initialize))]
 public partial class MainFile : Node
 {
-    private const string ModId = "Quicker";
+    public const string ModId = "TPLT"; //At the moment, this is used only for the Logger and harmony names.
     private static Logger Logger { get; } = new(ModId, LogType.Generic);
 
     public static float DeltaMultiplier { get; set; } = 2.0f;
@@ -121,19 +125,73 @@ public static class NGameInputPatch
 
 public static class SmoothDampPatches
 {
-    public static bool FloatPrefix(float target, ref float currentVelocity, ref float result)
+    public static bool FloatPrefix(float target, ref float currentVelocity, ref float __result)
     {
         if (!MainFile.IsInstantLerp) return true;
-        result = target;
+        __result = target;
         currentVelocity = 0;
         return false;
     }
 
-    public static bool Vector2Prefix(Vector2 target, ref Vector2 currentVelocity, ref Vector2 result)
+    public static bool Vector2Prefix(Vector2 target, ref Vector2 currentVelocity, ref Vector2 __result)
     {
         if (!MainFile.IsInstantLerp) return true;
-        result = target;
+        __result = target;
         currentVelocity = Vector2.Zero;
         return false;
+    }
+}
+
+[HarmonyPatch]
+public class Patch
+{
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NMouseCardPlay), "TargetSelection")]
+    private static bool TargetSelection(NMouseCardPlay __instance, TargetMode targetMode, ref Task __result)
+    {
+        var card = AccessTools.PropertyGetter(typeof(NCardPlay), "Card")?.Invoke(__instance, null) as CardModel;
+
+        if (!IsAutoPlayable(card)) return true;
+
+        // manually set _target if type == AnyEnemy
+        if (card is { TargetType: TargetType.AnyEnemy })
+        {
+            var target = card.CombatState?.HittableEnemies[0];
+            if (target is null) return true;
+            AccessTools.Field(typeof(NMouseCardPlay), "_target").SetValue(__instance, target);
+        }
+
+        // MegaCrit sets _target for All other types in IsAutoPlayable()
+        __result = Task.CompletedTask;
+        return false;
+    }
+
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NMouseCardPlay), "IsCardInPlayZone")]
+    private static bool IsCardInPlayZone(ref bool __result)
+    {
+        __result = true;
+        return false;
+    }
+
+
+    [HarmonyPatch(typeof(NPlayerHand), "StartCardPlay")]
+    private static void StartCardPlay(NHandCardHolder holder, ref bool startedViaShortcut)
+    {
+        if (IsAutoPlayable(holder.CardModel)) startedViaShortcut = true;
+    }
+
+
+    public static bool IsAutoPlayable(CardModel? card)
+    {
+        if (card?.CombatState == null) return false;
+
+        return card.TargetType switch
+        {
+            TargetType.None or TargetType.Self or TargetType.AllEnemies or TargetType.RandomEnemy => true,
+            TargetType.AnyEnemy => card.CombatState.HittableEnemies.Count == 1,
+            _ => false
+        };
     }
 }
