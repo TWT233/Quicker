@@ -22,10 +22,6 @@ public static class Hotkey
                 Context.Log(
                     $"Speed Multiplier Toggled: {Context.IsDeltaMultiplied} (Scale: {oldScale:F1} -> {Engine.TimeScale:F1})");
                 break;
-            case Key.F9:
-                Context.IsInstantLerp = !Context.IsInstantLerp;
-                Context.Log($"Instant Lerp Toggled: {Context.IsInstantLerp}");
-                break;
             case Key.Bracketright:
                 Context.DeltaMultiplier += 0.5f;
                 if (Context.IsDeltaMultiplied) Engine.TimeScale = Context.DeltaMultiplier;

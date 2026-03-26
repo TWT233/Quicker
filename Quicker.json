@@ -3,7 +3,7 @@
   "name": "Quicker",
   "author": "TWT",
   "description": "https://github.com/TWT233/Quicker",
-  "version": "v0.0.0",
+  "version": "v1.0.0",
   "has_pck": false,
   "has_dll": true,
   "dependencies": [

@@ -2,7 +2,6 @@ using System.Reflection;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Modding;
-using Quicker.Patch;
 using Quicker.Util;
 
 namespace Quicker;
@@ -16,8 +15,6 @@ public partial class MainFile : Node
 
         // Auto patch with attributes (for NGame)
         harmony.PatchAll(Assembly.GetExecutingAssembly());
-
-        Speed.Patch(harmony);
 
         Context.Log("Initialized");
     }
