@@ -15,18 +15,18 @@ public static class Context
 
     private static Logger L { get; } = new(ModId, LogType.Generic);
 
+
+    private static readonly FieldInfo ConsoleOutputBuffer =
+        typeof(NDevConsole).GetField("_outputBuffer", BindingFlags.NonPublic | BindingFlags.Instance)!;
+    
     public static void Log(string message, LogLevel level = LogLevel.Info, int skipFrames = 1)
     {
         L.LogMessage(level, $"[{ModId}] {message}", skipFrames);
 
         try
         {
-            var console = NDevConsole.Instance;
-            var outputBufferField =
-                typeof(NDevConsole).GetField("_outputBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (outputBufferField?.GetValue(console) is not RichTextLabel outputBuffer) return;
-            outputBuffer.Text += $"[color=#00ffff][{ModId}][/color] {message}";
-            outputBuffer.Text += "\n";
+            if (ConsoleOutputBuffer.GetValue(NDevConsole.Instance) is not RichTextLabel console) return;
+            console.Text += $"[color=#00ffff][{ModId}][/color] {message} \n";
         }
         catch
         {
