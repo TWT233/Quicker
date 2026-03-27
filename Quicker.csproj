@@ -50,7 +50,7 @@
     <!-- macOS -->
     <PropertyGroup Condition="'$(IsOSX)' == 'true'">
         <SteamLibraryPath Condition="'$(SteamLibraryPath)' == ''">$(HOME)/Library/Application Support/Steam/steamapps</SteamLibraryPath>
-        <GodotPath Condition="'$(GodotPath)' == ''">$(HOME)/Applications/Godot_mono.app/Contents/MacOS/Godot</GodotPath>
+        <GodotPath Condition="'$(GodotPath)' == ''">$(HOME)/Applications/MegaDot.app/Contents/MacOS/Godot</GodotPath>
 
         <!-- The below should not need to be changed. -->
         <Sts2Path>$(SteamLibraryPath)/common/Slay the Spire 2</Sts2Path>
