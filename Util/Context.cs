@@ -12,7 +12,6 @@ public static class Context
 
     public static float DeltaMultiplier { get; set; } = 2.0f;
     public static bool IsDeltaMultiplied { get; set; } = true;
-    public static bool IsInstantLerp { get; set; } = true;
 
     private static Logger L { get; } = new(ModId, LogType.Generic);
 

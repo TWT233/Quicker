@@ -5,10 +5,12 @@ using Quicker.Util;
 
 namespace Quicker.Patch;
 
-[HarmonyPatch(typeof(NGame), "_Input")]
+[HarmonyPatch]
 public static class Hotkey
 {
-    public static void Postfix(InputEvent inputEvent)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(NGame), "_Input")]
+    public static void Handle(InputEvent inputEvent)
     {
         if (inputEvent is not InputEventKey { Pressed: true } keyEvent || keyEvent.Echo) return;
 

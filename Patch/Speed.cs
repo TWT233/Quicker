@@ -6,19 +6,22 @@ using Quicker.Util;
 
 namespace Quicker.Patch;
 
-[HarmonyPatch(typeof(NHitStop), "SetTimeScale")]
-public static class HitStopPatch
+[HarmonyPatch]
+public class Speed
 {
-    public static void Prefix(ref float timeScale)
+    // SetTimeScale
+    // some battle scene action would change game speed
+    // fix by this patch
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NHitStop), "SetTimeScale")]
+    private static void SetTimeScale(NHitStop __instance, float timeScale)
     {
         if (Context.IsDeltaMultiplied && timeScale >= 1.0f) timeScale = Context.DeltaMultiplier;
     }
-}
 
-[HarmonyPatch(typeof(NGame), "_Ready")]
-public static class NGameReadyPatch
-{
-    public static void Postfix()
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NGame), "_Ready")]
+    private static void NGameReady(NGame __instance)
     {
         if (Context.IsDeltaMultiplied) Engine.TimeScale = Context.DeltaMultiplier;
     }

@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 namespace Quicker.Patch;
 
 [HarmonyPatch]
-public class Patcha
+public class NoDrag
 {
     [HarmonyPrefix]
     [HarmonyPatch(typeof(NMouseCardPlay), "TargetSelection")]
@@ -47,7 +47,7 @@ public class Patcha
     }
 
 
-    public static bool IsAutoPlayable(CardModel? card)
+    private static bool IsAutoPlayable(CardModel? card)
     {
         if (card?.CombatState == null) return false;
 
