@@ -14,7 +14,7 @@ public class Speed
     // fix by this patch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(NHitStop), "SetTimeScale")]
-    private static void SetTimeScale(NHitStop __instance, float timeScale)
+    private static void SetTimeScale(NHitStop __instance, ref float timeScale)
     {
         if (Context.IsDeltaMultiplied && timeScale >= 1.0f) timeScale = Context.DeltaMultiplier;
     }
